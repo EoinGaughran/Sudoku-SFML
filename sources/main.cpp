@@ -2,6 +2,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window.hpp>
+#include <iostream>
 
 #define GLAD_GL_IMPLEMENTATION
 #include "gl.h"
@@ -127,49 +128,28 @@ int main()
     // Start the game loop
     while (window.isOpen())
     {
-        // Process events
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            // Close window: exit
-            if (event.type == sf::Event::Closed)
-                window.close();
+        sf::Event game;
+        while(window.pollEvent(game)){
 
-            // Escape key: exit
-            if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
-                window.close();
-
-            // Resize event: adjust the viewport
-            if (event.type == sf::Event::Resized)
+            switch (game.type)
             {
-                glViewport(0, 0, event.size.width, event.size.height);
-                glMatrixMode(GL_PROJECTION);
-                glLoadIdentity();
-                GLfloat ratio = static_cast<float>(event.size.width) / event.size.height;
-#ifdef SFML_OPENGL_ES
-                glFrustumf(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
-#else
-                glFrustum(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
-#endif
+
+            case sf::Event::Closed:
+
+                window.close();
+                break;
+
+            case sf::Event::Resized:
+                //std::cout << "New window width: " << game.size.width << " New window height: " << game.size.height << std::endl;
+                printf("New hhwindow width: %i New window height %i\n", game.size.width, game.size.height);
+                break;
+
+            case sf::Event::TextEntered:
+
+                if (game.text.unicode < 128)
+                    std::cout << "ASCII character typed: " << static_cast<char>(game.text.unicode) << std::endl;
             }
         }
-
-        // Clear the color and depth buffers
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Apply some transformations to rotate the cube
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glTranslatef(0.f, 0.f, -200.f);
-        glRotatef(clock.getElapsedTime().asSeconds() * 50, 1.f, 0.f, 0.f);
-        glRotatef(clock.getElapsedTime().asSeconds() * 30, 0.f, 1.f, 0.f);
-        glRotatef(clock.getElapsedTime().asSeconds() * 90, 0.f, 0.f, 1.f);
-
-        // Draw the cube
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        // Finally, display the rendered frame on screen
-        window.display();
     }
 
     return EXIT_SUCCESS;
