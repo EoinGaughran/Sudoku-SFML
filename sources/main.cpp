@@ -1,8 +1,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window.hpp>
+
+#include <SFML/Graphics.hpp>
 #include <iostream>
+#include "Animation.h"
 
 #define GLAD_GL_IMPLEMENTATION
 #include "gl.h"
@@ -11,123 +13,52 @@
 #include <SFML/Main.hpp>
 #endif
 
-////////////////////////////////////////////////////////////
-/// Entry point of application
-///
-/// \return Application exit code
-///
-////////////////////////////////////////////////////////////
 int main()
 {
-    // Request a 24-bits depth buffer when creating the window
-    sf::ContextSettings contextSettings;
-    contextSettings.depthBits = 24;
+    int height = 480;
+    int width = 640;
 
     // Create the main window
-    sf::Window window(sf::VideoMode(640, 480), "SFML window with OpenGL", sf::Style::Default, contextSettings);
+    sf::RenderWindow window(sf::VideoMode(width, height), "SFML window with OpenGL", sf::Style::Close | sf::Style::Resize);
 
-    // Make it the active window for OpenGL calls
-    window.setActive();
+    float cubeSize = 48.0;
+    
+    sf::RectangleShape player(sf::Vector2f(cubeSize, cubeSize));
+    //player.setFillColor(sf::Color::Red);
+    player.setOrigin(cubeSize/2, cubeSize/2);
 
-    // Load OpenGL or OpenGL ES entry points using glad
-#ifdef SFML_OPENGL_ES
-    gladLoadGLES1(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
-#else
-    gladLoadGL(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
-#endif
+    sf::Texture texture;
+    if (!texture.loadFromFile("../../res/textures/heart.png")){
+        std::cout << "Image didn't load." << std::endl;
+    }
 
-    // Set the color and depth clear values
-#ifdef SFML_OPENGL_ES
-    glClearDepthf(1.f);
-#else
-    glClearDepth(1.f);
-#endif
-    glClearColor(0.f, 0.f, 0.f, 1.f);
+    player.setTexture(&texture);
+    player.setPosition(width/2, height/2);
 
-    // Enable Z-buffer read and write
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE);
+    ////////////////
+    //// TUX ///////
+    ////////////////
 
-    // Disable lighting and texturing
-    glDisable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D);
+    sf::Texture tuxTexture;
+    tuxTexture.loadFromFile("../../res/textures/tux.png");
 
-    // Configure the viewport (the same size as the window)
-    glViewport(0, 0, window.getSize().x, window.getSize().y);
+    sf::RectangleShape tux(sf::Vector2f(100.0f, 150.0f));
+    
+    tux.setTexture(&tuxTexture);
+    tux.setOrigin(50.0f, 75.0f);
+    tux.setPosition(width/2, height/2);
 
-    // Setup a perspective projection
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    GLfloat ratio = static_cast<float>(window.getSize().x) / window.getSize().y;
-#ifdef SFML_OPENGL_ES
-    glFrustumf(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
-#else
-    glFrustum(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
-#endif
-
-    // Define a 3D cube (6 faces made of 2 triangles composed by 3 vertices)
-    GLfloat cube[] =
-    {
-        // positions    // colors (r, g, b, a)
-        -50, -50, -50,  0, 0, 1, 1,
-        -50,  50, -50,  0, 0, 1, 1,
-        -50, -50,  50,  0, 0, 1, 1,
-        -50, -50,  50,  0, 0, 1, 1,
-        -50,  50, -50,  0, 0, 1, 1,
-        -50,  50,  50,  0, 0, 1, 1,
-
-         50, -50, -50,  0, 1, 0, 1,
-         50,  50, -50,  0, 1, 0, 1,
-         50, -50,  50,  0, 1, 0, 1,
-         50, -50,  50,  0, 1, 0, 1,
-         50,  50, -50,  0, 1, 0, 1,
-         50,  50,  50,  0, 1, 0, 1,
-
-        -50, -50, -50,  1, 0, 0, 1,
-         50, -50, -50,  1, 0, 0, 1,
-        -50, -50,  50,  1, 0, 0, 1,
-        -50, -50,  50,  1, 0, 0, 1,
-         50, -50, -50,  1, 0, 0, 1,
-         50, -50,  50,  1, 0, 0, 1,
-
-        -50,  50, -50,  0, 1, 1, 1,
-         50,  50, -50,  0, 1, 1, 1,
-        -50,  50,  50,  0, 1, 1, 1,
-        -50,  50,  50,  0, 1, 1, 1,
-         50,  50, -50,  0, 1, 1, 1,
-         50,  50,  50,  0, 1, 1, 1,
-
-        -50, -50, -50,  1, 0, 1, 1,
-         50, -50, -50,  1, 0, 1, 1,
-        -50,  50, -50,  1, 0, 1, 1,
-        -50,  50, -50,  1, 0, 1, 1,
-         50, -50, -50,  1, 0, 1, 1,
-         50,  50, -50,  1, 0, 1, 1,
-
-        -50, -50,  50,  1, 1, 0, 1,
-         50, -50,  50,  1, 1, 0, 1,
-        -50,  50,  50,  1, 1, 0, 1,
-        -50,  50,  50,  1, 1, 0, 1,
-         50, -50,  50,  1, 1, 0, 1,
-         50,  50,  50,  1, 1, 0, 1,
-    };
-
-    // Enable position and color vertex components
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 7 * sizeof(GLfloat), cube);
-    glColorPointer(4, GL_FLOAT, 7 * sizeof(GLfloat), cube + 3);
-
-    // Disable normal and texture coordinates vertex components
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    Animation animation(&tuxTexture, sf::Vector2u(3, 9), 0.3f);
 
     // Create a clock for measuring the time elapsed
     sf::Clock clock;
+    float deltaTime = 0.0f;
 
     // Start the game loop
     while (window.isOpen())
     {
+        deltaTime = clock.restart().asSeconds();
+
         sf::Event game;
         while(window.pollEvent(game)){
 
@@ -150,6 +81,35 @@ int main()
                     std::cout << "ASCII character typed: " << static_cast<char>(game.text.unicode) << std::endl;
             }
         }
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)){
+            tux.move(-0.1f, 0.0f);
+        }
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)){
+            tux.move(0.0f, -0.1f);
+        }
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)){
+            tux.move(0.0f, 0.1f);
+        }
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)){
+            tux.move(0.1f, 0.0f);
+        }
+
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+            player.setPosition((float) mousePos.x, (float) mousePos.y);
+        }
+
+        animation.Update(0, deltaTime);
+        tux.setTextureRect(animation.uvRect);
+
+        window.clear(sf::Color(150, 150, 150));
+        window.draw(player);
+        window.draw(tux);
+        window.display();
     }
 
     return EXIT_SUCCESS;

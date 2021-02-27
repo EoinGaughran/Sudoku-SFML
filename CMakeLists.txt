@@ -32,12 +32,18 @@ endif()
 
 add_subdirectory(external/sfml)
 
+add_library(
+   Animation sources/Animation.cpp sources/Animation.h
+)
+
 target_include_directories(${PROJECT_NAME} 
     PUBLIC external/sfml/include
+    PUBLIC sources/
 )
 
 target_link_directories(${PROJECT_NAME} 
     PUBLIC external/sfml/src
+    PUBLIC sources/
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -46,6 +52,7 @@ target_link_libraries(${PROJECT_NAME}
     sfml-network
     sfml-system
     sfml-window
+    animation
 )
 
 
