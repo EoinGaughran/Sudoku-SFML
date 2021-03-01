@@ -1,1 +1,2 @@
-add_library(animation Animation.cpp Animation.h)
+add_library(files Animation.cpp Animation.h Player.cpp Player.h)
+

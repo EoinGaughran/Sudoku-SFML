@@ -4,7 +4,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "Animation.h"
+#include <Player.h>
 
 #define GLAD_GL_IMPLEMENTATION
 #include "gl.h"
@@ -42,13 +42,7 @@ int main()
     sf::Texture tuxTexture;
     tuxTexture.loadFromFile("../../res/textures/tux.png");
 
-    sf::RectangleShape tux(sf::Vector2f(100.0f, 150.0f));
-    
-    tux.setTexture(&tuxTexture);
-    tux.setOrigin(50.0f, 75.0f);
-    tux.setPosition(width/2, height/2);
-
-    Animation animation(&tuxTexture, sf::Vector2u(3, 9), 0.3f);
+    Player tux(&tuxTexture, sf::Vector2u(3, 9), 0.3f, 100.0f);
 
     // Create a clock for measuring the time elapsed
     sf::Clock clock;
@@ -82,33 +76,16 @@ int main()
             }
         }
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)){
-            tux.move(-0.1f, 0.0f);
-        }
-
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)){
-            tux.move(0.0f, -0.1f);
-        }
-
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)){
-            tux.move(0.0f, 0.1f);
-        }
-
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)){
-            tux.move(0.1f, 0.0f);
-        }
-
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
             player.setPosition((float) mousePos.x, (float) mousePos.y);
         }
 
-        animation.Update(0, deltaTime);
-        tux.setTextureRect(animation.uvRect);
+        tux.Update(deltaTime);
 
         window.clear(sf::Color(150, 150, 150));
         window.draw(player);
-        window.draw(tux);
+        tux.Draw(window);
         window.display();
     }
 
