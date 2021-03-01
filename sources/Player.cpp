@@ -1,14 +1,15 @@
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 
-Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed) :
+Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size) :
     animation(texture, imageCount, switchTime)
 {
     this->speed = speed;
     row = 0;
     faceRight = true;
 
-    body.setSize(sf::Vector2f(100.0f, 150.0f));
+    body.setSize(size);
+    body.setOrigin(body.getSize() / 2.0f);
     body.setTexture(texture);
     body.setPosition(200.0f, 200.0f);
 }

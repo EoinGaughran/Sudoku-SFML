@@ -6,12 +6,13 @@
 #include <iostream>
 #include <Player.h>
 
-#define GLAD_GL_IMPLEMENTATION
-#include "gl.h"
+static const float VIEW_HEIGHT = 512.0f;
 
-#ifdef SFML_SYSTEM_IOS
-#include <SFML/Main.hpp>
-#endif
+void ResizeView(const sf::RenderWindow& window, sf::View& view){
+
+    float aspectRatio = float(window.getSize().x) / float(window.getSize().y);
+    view.setSize(VIEW_HEIGHT * aspectRatio, VIEW_HEIGHT);
+}
 
 int main()
 {
@@ -20,6 +21,7 @@ int main()
 
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(width, height), "SFML window with OpenGL", sf::Style::Close | sf::Style::Resize);
+    sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(VIEW_HEIGHT, VIEW_HEIGHT));
 
     float cubeSize = 48.0;
     
@@ -41,8 +43,18 @@ int main()
 
     sf::Texture tuxTexture;
     tuxTexture.loadFromFile("../../res/textures/tux.png");
+    int textureRows = 9;
+    int textureColumns = 3;
 
-    Player tux(&tuxTexture, sf::Vector2u(3, 9), 0.3f, 100.0f);
+    Player tux(
+        &tuxTexture,
+        sf::Vector2u(textureColumns,textureRows),
+        0.3f,
+        100.0f,
+        sf::Vector2f((tuxTexture.getSize().x)/textureColumns, (tuxTexture.getSize().y)/textureRows)
+    );
+
+    tux.setPosition(sf::Vector2f(width/2, height/2));
 
     // Create a clock for measuring the time elapsed
     sf::Clock clock;
@@ -67,12 +79,15 @@ int main()
             case sf::Event::Resized:
                 //std::cout << "New window width: " << game.size.width << " New window height: " << game.size.height << std::endl;
                 printf("New hhwindow width: %i New window height %i\n", game.size.width, game.size.height);
+                ResizeView(window, view);
+
                 break;
 
             case sf::Event::TextEntered:
 
                 if (game.text.unicode < 128)
                     std::cout << "ASCII character typed: " << static_cast<char>(game.text.unicode) << std::endl;
+                break;
             }
         }
 
@@ -82,8 +97,10 @@ int main()
         }
 
         tux.Update(deltaTime);
+        view.setCenter(tux.getPosition());
 
         window.clear(sf::Color(150, 150, 150));
+        window.setView(view);
         window.draw(player);
         tux.Draw(window);
         window.display();
