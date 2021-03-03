@@ -6,6 +6,7 @@
 #include <iostream>
 #include <Player.h>
 #include <Platform.h>
+#include <vector>
 
 static const float VIEW_HEIGHT = 512.0f;
 
@@ -51,20 +52,29 @@ int main()
         &tuxTexture,
         sf::Vector2u(textureColumns,textureRows),
         0.3f,
-        100.0f
+        100.0f,
+        200.0f
     );
 
-    Platform platform1(
+    std::vector<Platform> platforms;
+
+    platforms.push_back(Platform(
         nullptr,
         sf::Vector2f(400.0f, 200.0f),
         sf::Vector2f(700.0f, 200.0f)
-    );
+    ));
 
-    Platform platform2(
+    platforms.push_back(Platform(
         nullptr,
         sf::Vector2f(400.0f, 200.0f),
         sf::Vector2f(700.0f, 0.0f)
-    );
+    ));
+
+    platforms.push_back(Platform(
+        nullptr,
+        sf::Vector2f(1000.0f, 200.0f),
+        sf::Vector2f(700.0f, 500.0f)
+    ));
 
     tux.setPosition(sf::Vector2f(width/2, height/2));
 
@@ -76,6 +86,8 @@ int main()
     while (window.isOpen())
     {
         deltaTime = clock.restart().asSeconds();
+        if(deltaTime > 1.0f / 20.0f)
+            deltaTime = 1.0f / 20.0f;
 
         sf::Event game;
         while(window.pollEvent(game)){
@@ -111,8 +123,14 @@ int main()
         //Update players position first
         tux.Update(deltaTime);
 
-        platform1.GetCollision().CheckCollision(tux.GetCollider(), 0.9f); //Heavy move
-        platform2.GetCollision().CheckCollision(tux.GetCollider(), 1.0f); //Unmoveable
+        sf::Vector2f direction;
+
+        for(Platform& platform : platforms)
+            if(platform.GetCollision().CheckCollision(tux.GetCollider(), direction, 1.0f))
+                tux.OnCollision(direction);
+
+        //platform1.GetCollision().CheckCollision(tux.GetCollider(), 0.9f); //Heavy move
+        //platform2.GetCollision().CheckCollision(tux.GetCollider(), 1.0f); //Unmoveable
 
         view.setCenter(tux.getPosition());
 
@@ -121,9 +139,11 @@ int main()
 
         window.draw(player);
         tux.Draw(window);
-        platform1.Draw(window);
-        platform2.Draw(window);
 
+        for(Platform& platform : platforms)
+            if(platform.GetCollision().CheckCollision(tux.GetCollider(), direction, 1.0f))
+                platform.Draw(window);
+        
         window.display();
     }
 
