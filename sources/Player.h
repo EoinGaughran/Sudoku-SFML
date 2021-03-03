@@ -1,11 +1,12 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Animation.h"
+#include "Collider.h"
 
 class Player
 {
 public:
-    Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size);
+    Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed);
     ~Player();
 
     void Update(float deltaTime);
@@ -14,6 +15,8 @@ public:
     void setPosition(sf::Vector2f position){ body.setPosition(position);};
 
     sf::Vector2f getPosition(){ return body.getPosition();}
+
+    Collider GetCollider() { return Collider(body);}
 
 private:
 

@@ -1,14 +1,14 @@
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 
-Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size) :
+Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed) :
     animation(texture, imageCount, switchTime)
 {
     this->speed = speed;
     row = 0;
     faceRight = true;
 
-    body.setSize(size);
+    body.setSize(sf::Vector2f(100.0f, 150.0f));
     body.setOrigin(body.getSize() / 2.0f);
     body.setTexture(texture);
     body.setPosition(200.0f, 200.0f);
@@ -27,6 +27,12 @@ void Player::Update(float deltaTime){
 
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
         movement.x += speed * deltaTime;
+
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+        movement.y -= speed * deltaTime;
+
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+        movement.y += speed * deltaTime;
 
     if(movement.x == 0.0f){
         

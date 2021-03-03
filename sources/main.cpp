@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <Player.h>
+#include <Platform.h>
 
 static const float VIEW_HEIGHT = 512.0f;
 
@@ -50,8 +51,19 @@ int main()
         &tuxTexture,
         sf::Vector2u(textureColumns,textureRows),
         0.3f,
-        100.0f,
-        sf::Vector2f((tuxTexture.getSize().x)/textureColumns, (tuxTexture.getSize().y)/textureRows)
+        100.0f
+    );
+
+    Platform platform1(
+        nullptr,
+        sf::Vector2f(400.0f, 200.0f),
+        sf::Vector2f(700.0f, 200.0f)
+    );
+
+    Platform platform2(
+        nullptr,
+        sf::Vector2f(400.0f, 200.0f),
+        sf::Vector2f(700.0f, 0.0f)
     );
 
     tux.setPosition(sf::Vector2f(width/2, height/2));
@@ -96,13 +108,22 @@ int main()
             player.setPosition((float) mousePos.x, (float) mousePos.y);
         }
 
+        //Update players position first
         tux.Update(deltaTime);
+
+        platform1.GetCollision().CheckCollision(tux.GetCollider(), 0.9f); //Heavy move
+        platform2.GetCollision().CheckCollision(tux.GetCollider(), 1.0f); //Unmoveable
+
         view.setCenter(tux.getPosition());
 
         window.clear(sf::Color(150, 150, 150));
         window.setView(view);
+
         window.draw(player);
         tux.Draw(window);
+        platform1.Draw(window);
+        platform2.Draw(window);
+
         window.display();
     }
 
