@@ -7,6 +7,7 @@
 #include <Player.h>
 #include <Platform.h>
 #include <vector>
+#include <Board.h>
 
 static const float VIEW_HEIGHT = 512.0f;
 
@@ -78,6 +79,15 @@ int main()
 
     tux.setPosition(sf::Vector2f(width/2, height/2));
 
+    sf::Font font;
+    if (!font.loadFromFile("../../res/fonts/heebo/Heebo-Medium.ttf"))
+    {
+        // error...
+    }
+
+    //Create Board
+    Board board(sf::Vector2u(9,9), sf::Vector2f(50.0f,50.0f), 1, font);
+
     // Create a clock for measuring the time elapsed
     sf::Clock clock;
     float deltaTime = 0.0f;
@@ -139,6 +149,7 @@ int main()
 
         window.draw(player);
         tux.Draw(window);
+        board.draw(window);
 
         for(Platform& platform : platforms)
             if(platform.GetCollision().CheckCollision(tux.GetCollider(), direction, 1.0f))

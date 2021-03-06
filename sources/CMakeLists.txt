@@ -5,3 +5,8 @@ add_library(files
     Collider.cpp Collider.h
 )
 
+add_library(sudoku
+    Board.cpp Board.h
+    Square.cpp Square.h
+)
+
