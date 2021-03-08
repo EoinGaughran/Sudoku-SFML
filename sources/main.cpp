@@ -8,6 +8,7 @@
 #include <Platform.h>
 #include <vector>
 #include <Board.h>
+#include <Square.h>
 
 static const float VIEW_HEIGHT = 512.0f;
 
@@ -44,7 +45,7 @@ int main()
     //// TUX ///////
     ////////////////
 
-    sf::Texture tuxTexture;
+    /*sf::Texture tuxTexture;
     tuxTexture.loadFromFile("../../res/textures/tux.png");
     int textureRows = 9;
     int textureColumns = 3;
@@ -77,7 +78,7 @@ int main()
         sf::Vector2f(700.0f, 500.0f)
     ));
 
-    tux.setPosition(sf::Vector2f(width/2, height/2));
+    tux.setPosition(sf::Vector2f(width/2, height/2));*/
 
     sf::Font font;
     if (!font.loadFromFile("../../res/fonts/heebo/Heebo-Medium.ttf"))
@@ -86,7 +87,11 @@ int main()
     }
 
     //Create Board
-    Board board(sf::Vector2u(9,9), sf::Vector2f(50.0f,50.0f), 1, font);
+    //Board board(sf::Vector2u(9,9), sf::Vector2f(50.0f,50.0f), 1, font);
+
+    //Square square[3];
+
+    Square square(nullptr, sf::Vector2f(100.0f,100.0f), sf::Vector2f(50.0f,50.0f), sf::Vector2u(0,0), font, 5, 7, true);
 
     // Create a clock for measuring the time elapsed
     sf::Clock clock;
@@ -131,29 +136,31 @@ int main()
         }
 
         //Update players position first
-        tux.Update(deltaTime);
+        //tux.Update(deltaTime);
 
         sf::Vector2f direction;
 
-        for(Platform& platform : platforms)
+        /*for(Platform& platform : platforms)
             if(platform.GetCollision().CheckCollision(tux.GetCollider(), direction, 1.0f))
-                tux.OnCollision(direction);
+                tux.OnCollision(direction);*/
 
         //platform1.GetCollision().CheckCollision(tux.GetCollider(), 0.9f); //Heavy move
         //platform2.GetCollision().CheckCollision(tux.GetCollider(), 1.0f); //Unmoveable
 
-        view.setCenter(tux.getPosition());
+        //view.setCenter(tux.getPosition());
+        view.setCenter(square.getPosition());
 
         window.clear(sf::Color(150, 150, 150));
         window.setView(view);
 
         window.draw(player);
-        tux.Draw(window);
-        board.draw(window);
+        //tux.Draw(window);
+        square.Draw(window);
+        square.Update();
 
-        for(Platform& platform : platforms)
+        /*for(Platform& platform : platforms)
             if(platform.GetCollision().CheckCollision(tux.GetCollider(), direction, 1.0f))
-                platform.Draw(window);
+                platform.Draw(window);*/
         
         window.display();
     }

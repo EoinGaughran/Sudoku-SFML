@@ -22,7 +22,7 @@ public:
         sf::Vector2f size,
         sf::Vector2f position,
         sf::Vector2u boardLocation,
-        sf::Font font,
+        sf::Font& font,
         int displayValue,
         int trueValue,
         bool visable
@@ -32,5 +32,9 @@ public:
 
     bool isTheValueCorrect();
     void changeDisplayValue(int guess);
-    void Update(sf::RenderWindow& window);
+    void Draw(sf::RenderWindow& window);
+    void Update();
+
+    sf::Vector2f getPosition() { return cooards; }
 };
+

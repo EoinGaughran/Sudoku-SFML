@@ -6,7 +6,15 @@ class Board
 {
 private:
 
-    Square square;
+    Square *square;
+    sf::Texture* texture;
+    sf::Vector2f size;
+    sf::Vector2f position;
+    sf::Vector2u boardLocation;
+    sf::Font font;
+    int displayValue;
+    int trueValue;
+    bool visable;
 
 public:
     Board(sf::Vector2u size, sf::Vector2f cooards, int difficulty, sf::Font font);

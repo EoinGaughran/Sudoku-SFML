@@ -13,7 +13,7 @@ public:
     void Draw(sf::RenderWindow& window);
     void OnCollision(sf::Vector2f direction);
 
-    void setPosition(sf::Vector2f position){ body.setPosition(position);};
+    void setPosition(sf::Vector2f position){ body.setPosition(position);}
 
     sf::Vector2f getPosition(){ return body.getPosition();}
 
