@@ -10,7 +10,7 @@
 #include <Board.h>
 #include <Square.h>
 
-static const float VIEW_HEIGHT = 512.0f;
+static const float VIEW_HEIGHT = 640.0f;
 
 void ResizeView(const sf::RenderWindow& window, sf::View& view){
 
@@ -20,7 +20,7 @@ void ResizeView(const sf::RenderWindow& window, sf::View& view){
 
 int main()
 {
-    int height = 480;
+    int height = 640;
     int width = 640;
 
     // Create the main window
@@ -89,9 +89,37 @@ int main()
     //Create Board
     //Board board(sf::Vector2u(9,9), sf::Vector2f(50.0f,50.0f), 1, font);
 
-    //Square square[3];
+    sf::RectangleShape black;
+    black.setPosition(sf::Vector2f(45.0f,45.0f));
+    black.setSize(sf::Vector2f(455.0f,455.0f));
+    black.setFillColor(sf::Color::Black);
 
-    Square square(nullptr, sf::Vector2f(100.0f,100.0f), sf::Vector2f(50.0f,50.0f), sf::Vector2u(0,0), font, 5, 7, true);
+    int boardSize = 9;
+    //int squareSize = 3;
+
+    std::vector<Square> squares;
+
+    /* initialize random seed: */
+    srand (time(NULL));
+
+    for(int i = 1 ; i <= boardSize ; i++ ){
+
+        for(int j = 1 ; j <= boardSize ; j++){
+
+            squares.push_back(Square(
+                nullptr,
+                sf::Vector2f(45.0f, 45.0f),
+                sf::Vector2f(50.0f * i ,50.0f * j),
+                sf::Vector2u(j,i),
+                font,
+                rand() % 9 + 1,
+                7,
+                true
+            ));
+        }
+    }
+
+    //Square square(nullptr, sf::Vector2f(100.0f,100.0f), sf::Vector2f(50.0f,50.0f), sf::Vector2u(0,0), font, 5, 7, true);
 
     // Create a clock for measuring the time elapsed
     sf::Clock clock;
@@ -132,35 +160,30 @@ int main()
 
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-            player.setPosition((float) mousePos.x, (float) mousePos.y);
-        }
+            //player.setPosition((float) mousePos.x, (float) mousePos.y);
 
-        //Update players position first
-        //tux.Update(deltaTime);
+            int i = 0;
+
+            for(Square& aSquare : squares){
+                aSquare.CheckButton(mousePos);
+            }
+        }
 
         sf::Vector2f direction;
 
-        /*for(Platform& platform : platforms)
-            if(platform.GetCollision().CheckCollision(tux.GetCollider(), direction, 1.0f))
-                tux.OnCollision(direction);*/
-
-        //platform1.GetCollision().CheckCollision(tux.GetCollider(), 0.9f); //Heavy move
-        //platform2.GetCollision().CheckCollision(tux.GetCollider(), 1.0f); //Unmoveable
-
-        //view.setCenter(tux.getPosition());
-        view.setCenter(square.getPosition());
+        view.setCenter(player.getPosition());
 
         window.clear(sf::Color(150, 150, 150));
         window.setView(view);
 
         window.draw(player);
         //tux.Draw(window);
-        square.Draw(window);
-        square.Update();
+        window.draw(black);
 
-        /*for(Platform& platform : platforms)
-            if(platform.GetCollision().CheckCollision(tux.GetCollider(), direction, 1.0f))
-                platform.Draw(window);*/
+        for(Square& aSquare : squares){
+            aSquare.Draw(window);
+            aSquare.Update();
+        }
         
         window.display();
     }

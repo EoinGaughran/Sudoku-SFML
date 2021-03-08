@@ -16,6 +16,8 @@ private:
 
     sf::RectangleShape background;
 
+    int fontSize = 33;
+
 public:
     Square(
         sf::Texture* texture,
@@ -36,5 +38,7 @@ public:
     void Update();
 
     sf::Vector2f getPosition() { return cooards; }
+
+    void CheckButton(sf::Vector2i mousePos);
 };
 
