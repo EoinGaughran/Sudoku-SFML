@@ -4,10 +4,8 @@
 class Square
 {
 private:
-    
-    sf::Texture* texture;
-    sf::Vector2f size;
-    sf::Vector2f cooards;
+
+    sf::Vector2f position;
     sf::Vector2u boardLocation;
     int displayValue;
     int trueValue;
@@ -16,15 +14,14 @@ private:
 
     sf::RectangleShape background;
 
-    int fontSize = 33;
-
 public:
     Square(
-        sf::Texture* texture,
+        sf::Color color,
         sf::Vector2f size,
         sf::Vector2f position,
         sf::Vector2u boardLocation,
         sf::Font& font,
+        int fontSize,
         int displayValue,
         int trueValue,
         bool visable
@@ -37,7 +34,7 @@ public:
     void Draw(sf::RenderWindow& window);
     void Update();
 
-    sf::Vector2f getPosition() { return cooards; }
+    sf::Vector2f getPosition() { return position; }
 
     void CheckButton(sf::Vector2i mousePos);
 };

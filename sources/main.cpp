@@ -10,7 +10,7 @@
 #include <Board.h>
 #include <Square.h>
 
-static const float VIEW_HEIGHT = 640.0f;
+static const float VIEW_HEIGHT = 550.0f;
 
 void ResizeView(const sf::RenderWindow& window, sf::View& view){
 
@@ -20,11 +20,11 @@ void ResizeView(const sf::RenderWindow& window, sf::View& view){
 
 int main()
 {
-    int height = 640;
-    int width = 640;
+    int height = 550;
+    int width = 550;
 
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode(width, height), "SFML window with OpenGL", sf::Style::Close | sf::Style::Resize);
+    sf::RenderWindow window(sf::VideoMode(width, height), "Sudoku SFML", sf::Style::Close | sf::Style::Resize);
     sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(VIEW_HEIGHT, VIEW_HEIGHT));
 
     float cubeSize = 48.0;
@@ -107,15 +107,46 @@ int main()
         for(int j = 1 ; j <= boardSize ; j++){
 
             squares.push_back(Square(
-                nullptr,
+                sf::Color(255,255,255),
                 sf::Vector2f(45.0f, 45.0f),
-                sf::Vector2f(50.0f * i ,50.0f * j),
+                sf::Vector2f(50.0f * j ,50.0f * i),
                 sf::Vector2u(j,i),
                 font,
+                33,
                 rand() % 9 + 1,
                 7,
                 true
             ));
+        }
+    }
+
+    sf::RectangleShape shade;
+    shade.setPosition(sf::Vector2f(0.0f,0.0f));
+    shade.setSize(sf::Vector2f(600.0f,600.0f));
+    shade.setFillColor(sf::Color(0,0,0,200));
+
+    int selection = 3;
+    int numbers = 1;
+
+    std::vector<Square> selectionSquares;
+
+    for(int i = 1 ; i <= selection ; i++ ){
+
+        for(int j = 1 ; j <= selection; j++){
+
+            selectionSquares.push_back(Square(
+                sf::Color(255,255,255,150),
+                sf::Vector2f(140.0f, 140.0f),
+                sf::Vector2f((150.0f * j)-100.0f ,(150.0f * i)-100.0f),
+                sf::Vector2u(j,i),
+                font,
+                100,
+                numbers,
+                7,
+                true
+            ));
+
+            numbers++;
         }
     }
 
@@ -128,9 +159,10 @@ int main()
     // Start the game loop
     while (window.isOpen())
     {
-        deltaTime = clock.restart().asSeconds();
+        /*deltaTime = clock.restart().asSeconds();
         if(deltaTime > 1.0f / 20.0f)
-            deltaTime = 1.0f / 20.0f;
+            deltaTime = 1.0f / 20.0f;*/
+
 
         sf::Event game;
         while(window.pollEvent(game)){
@@ -155,6 +187,7 @@ int main()
                 if (game.text.unicode < 128)
                     std::cout << "ASCII character typed: " << static_cast<char>(game.text.unicode) << std::endl;
                 break;
+            
             }
         }
 
@@ -165,6 +198,10 @@ int main()
             int i = 0;
 
             for(Square& aSquare : squares){
+                aSquare.CheckButton(mousePos);
+            }
+
+            for(Square& aSquare : selectionSquares){
                 aSquare.CheckButton(mousePos);
             }
         }
@@ -181,6 +218,14 @@ int main()
         window.draw(black);
 
         for(Square& aSquare : squares){
+            aSquare.Draw(window);
+            aSquare.Update();
+        }
+
+        window.draw(shade);
+
+        //TO DO: CHECK WHEN THIS NEEDS TO BE RENDERED
+        for(Square& aSquare : selectionSquares){
             aSquare.Draw(window);
             aSquare.Update();
         }

@@ -3,16 +3,17 @@
 #include "Square.h"
 
 Square::Square(
-    sf::Texture* texture,
+    sf::Color color,
     sf::Vector2f size,
     sf::Vector2f position,
     sf::Vector2u boardLocation,
     sf::Font& font,
+    int fontSize,
     int displayValue,
     int trueValue,
     bool visable
 ) {
-    background.setTexture(texture);
+    background.setFillColor(color);
     background.setSize(size);
     background.setPosition(position);
     //background.setOrigin(background.getSize() / 2.0f);
@@ -20,12 +21,16 @@ Square::Square(
     displayNumber.setFont(font);
     displayNumber.setString(std::to_string(displayValue));
     displayNumber.setCharacterSize(fontSize);
-    displayNumber.setFillColor(sf::Color::Black);
+    
+    if(visable) displayNumber.setFillColor(sf::Color::Black);
+    else displayNumber.setFillColor(sf::Color::White);
+
     //displayNumber.setOrigin(sf::Vector2f(fontSize/2, fontSize/2));
     displayNumber.setPosition((background.getPosition() + sf::Vector2f(12.0f, 2.0f)));
 
     //displayNumber.setStyle(sf::Text::Bold | sf::Text::Underlined);
 
+    this->position = position;
     this->boardLocation = boardLocation;
     this->displayValue = displayValue;
     this->trueValue = trueValue;
@@ -55,7 +60,10 @@ void Square::CheckButton(sf::Vector2i mousePos){
         mousePos.y > background.getPosition().y &&
         mousePos.y < (background.getPosition().y + background.getSize().y)
     ){
-        std::cout << displayValue << "\n";
+        std::cout << "Position(" << boardLocation.x << "," << boardLocation.y << "): ";
+        std::cout << displayValue;
+        std::cout << " mousePos.x: " << mousePos.x;
+        std::cout << " mousePos.y: " << mousePos.y << "\n";
         background.setFillColor(sf::Color::Red);
     }
 }

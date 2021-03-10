@@ -8,5 +8,6 @@ add_library(files
 add_library(sudoku
     Board.cpp Board.h
     Square.cpp Square.h
+    Selection.cpp Selection.h
 )
 
