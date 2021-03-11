@@ -96,7 +96,7 @@ void Square::Update(){
 void Square::setDisplayValue( int guess ){
 
     displayValue = guess;
-    displayNumberSFText.setString(std::to_string(displayValue));
+    displayNumberSFText.setString(std::to_string(guess));
 }
 
 bool Square::isTheValueCorrect(){ return displayValue == trueValue; }

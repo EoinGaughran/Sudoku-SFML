@@ -37,6 +37,7 @@ public:
     sf::Vector2f getPosition() { return position; }
     int getDisplayValue() { return displayValue; }
     int getTrueValue() { return trueValue; }
+    sf::Vector2u getMatrixPoint() { return boardLocation; }
 
     bool CheckButton(sf::Vector2i mousePos);
 };

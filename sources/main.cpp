@@ -131,6 +131,9 @@ int main()
     int bouncing = 10;
     int mouseHasBeenPressed = false;
 
+    //CHANGE THIS
+    sf::Vector2u locator;
+
     std::vector<Square> selectionSquares;
 
     for(int i = 1 ; i <= selection ; i++ ){
@@ -217,6 +220,9 @@ int main()
                             std::cout << "Return Value: " << aSquare.getDisplayValue() << "\n";
                             bouncing = 20;
                             enableSelect = true;
+
+                            //CHANGE THIS
+                            locator = aSquare.getMatrixPoint();
                         }
                     }
                 }
@@ -227,8 +233,17 @@ int main()
                         if(aSquare.CheckButton(mousePos)){
 
                             std::cout << "Return Value: " << aSquare.getDisplayValue() << "\n";
-                            aSquare.setDisplayValue(aSquare.getDisplayValue());
                             bouncing = 20;
+
+                            //CHANGE THIS
+                            for(Square& bSquare : squares){
+
+                                if(bSquare.getMatrixPoint() == locator){
+
+                                    bSquare.setDisplayValue(aSquare.getDisplayValue());
+                                }
+                            }
+
                             enableSelect = false;
                         }
                     }
