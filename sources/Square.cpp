@@ -18,15 +18,15 @@ Square::Square(
     background.setPosition(position);
     //background.setOrigin(background.getSize() / 2.0f);
 
-    displayNumber.setFont(font);
-    displayNumber.setString(std::to_string(displayValue));
-    displayNumber.setCharacterSize(fontSize);
+    displayNumberSFText.setFont(font);
+    displayNumberSFText.setString(std::to_string(displayValue));
+    displayNumberSFText.setCharacterSize(fontSize);
     
-    if(visable) displayNumber.setFillColor(sf::Color::Black);
-    else displayNumber.setFillColor(sf::Color::White);
+    if(visable) displayNumberSFText.setFillColor(sf::Color::Black);
+    else displayNumberSFText.setFillColor(sf::Color::White);
 
     //displayNumber.setOrigin(sf::Vector2f(fontSize/2, fontSize/2));
-    displayNumber.setPosition((background.getPosition() + sf::Vector2f(12.0f, 2.0f)));
+    displayNumberSFText.setPosition((background.getPosition() + sf::Vector2f(12.0f, 2.0f)));
 
     //displayNumber.setStyle(sf::Text::Bold | sf::Text::Underlined);
 
@@ -43,10 +43,10 @@ Square::~Square()
 void Square::Draw(sf::RenderWindow& window){
 
     window.draw(background);
-    window.draw(displayNumber);
+    window.draw(displayNumberSFText);
 }
 
-void Square::CheckButton(sf::Vector2i mousePos){
+bool Square::CheckButton(sf::Vector2i mousePos){
 
     /*std::cout << "mousePos.x: " << mousePos.x << "\n";
     std::cout << "mousePos.y: " << mousePos.y << "\n";
@@ -60,12 +60,15 @@ void Square::CheckButton(sf::Vector2i mousePos){
         mousePos.y > background.getPosition().y &&
         mousePos.y < (background.getPosition().y + background.getSize().y)
     ){
-        std::cout << "Position(" << boardLocation.x << "," << boardLocation.y << "): ";
+        /*std::cout << "Position(" << boardLocation.x << "," << boardLocation.y << "): ";
         std::cout << displayValue;
         std::cout << " mousePos.x: " << mousePos.x;
-        std::cout << " mousePos.y: " << mousePos.y << "\n";
+        std::cout << " mousePos.y: " << mousePos.y << "\n";*/
         background.setFillColor(sf::Color::Red);
+
+        return 1;
     }
+    return 0;
 }
 
 void Square::Update(){
@@ -85,11 +88,15 @@ void Square::Update(){
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
         velocity.y += speed;
 
-    displayNumber.move(velocity);
+    displayNumberSFText.move(velocity);
     background.move(velocity);
 
 }
 
-void Square::changeDisplayValue( int guess ){ displayValue = guess; }
+void Square::setDisplayValue( int guess ){
+
+    displayValue = guess;
+    displayNumberSFText.setString(std::to_string(displayValue));
+}
 
 bool Square::isTheValueCorrect(){ return displayValue == trueValue; }

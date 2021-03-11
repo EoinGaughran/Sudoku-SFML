@@ -127,6 +127,9 @@ int main()
 
     int selection = 3;
     int numbers = 1;
+    bool enableSelect = false;
+    int bouncing = 10;
+    int mouseHasBeenPressed = false;
 
     std::vector<Square> selectionSquares;
 
@@ -136,7 +139,7 @@ int main()
 
             selectionSquares.push_back(Square(
                 sf::Color(255,255,255,150),
-                sf::Vector2f(140.0f, 140.0f),
+                sf::Vector2f(145.0f, 145.0f),
                 sf::Vector2f((150.0f * j)-100.0f ,(150.0f * i)-100.0f),
                 sf::Vector2u(j,i),
                 font,
@@ -191,19 +194,52 @@ int main()
             }
         }
 
+        //if(bouncing > 0){
+
+            //bouncing--;
+        //}
+        
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
             //player.setPosition((float) mousePos.x, (float) mousePos.y);
 
             int i = 0;
 
-            for(Square& aSquare : squares){
-                aSquare.CheckButton(mousePos);
-            }
+            //mouse has been pressed - refuse Input
+            if(!mouseHasBeenPressed){
 
-            for(Square& aSquare : selectionSquares){
-                aSquare.CheckButton(mousePos);
+                if(!enableSelect){
+
+                    for(Square& aSquare : squares){
+
+                        if(aSquare.CheckButton(mousePos)){
+
+                            std::cout << "Return Value: " << aSquare.getDisplayValue() << "\n";
+                            bouncing = 20;
+                            enableSelect = true;
+                        }
+                    }
+                }
+                else{
+
+                    for(Square& aSquare : selectionSquares){
+
+                        if(aSquare.CheckButton(mousePos)){
+
+                            std::cout << "Return Value: " << aSquare.getDisplayValue() << "\n";
+                            aSquare.setDisplayValue(aSquare.getDisplayValue());
+                            bouncing = 20;
+                            enableSelect = false;
+                        }
+                    }
+                }
+                mouseHasBeenPressed = true;
             }
+        }
+        else{
+            
+            //mouse has been released - accept Input
+            mouseHasBeenPressed = false;
         }
 
         sf::Vector2f direction;
@@ -217,19 +253,25 @@ int main()
         //tux.Draw(window);
         window.draw(black);
 
-        for(Square& aSquare : squares){
-            aSquare.Draw(window);
-            aSquare.Update();
-        }
-
-        window.draw(shade);
-
-        //TO DO: CHECK WHEN THIS NEEDS TO BE RENDERED
-        for(Square& aSquare : selectionSquares){
-            aSquare.Draw(window);
-            aSquare.Update();
-        }
+        if(!enableSelect){
         
+            for(Square& aSquare : squares){
+                aSquare.Draw(window);
+                aSquare.Update();
+            }
+        }
+        else{
+            
+            window.draw(shade);
+
+            
+            for(Square& aSquare : selectionSquares){
+
+                aSquare.Draw(window);
+                aSquare.Update();
+            }
+        }
+
         window.display();
     }
 

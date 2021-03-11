@@ -10,7 +10,7 @@ private:
     int displayValue;
     int trueValue;
     bool visable;
-    sf::Text displayNumber;
+    sf::Text displayNumberSFText;
 
     sf::RectangleShape background;
 
@@ -30,12 +30,14 @@ public:
     ~Square();
 
     bool isTheValueCorrect();
-    void changeDisplayValue(int guess);
+    void setDisplayValue(int guess);
     void Draw(sf::RenderWindow& window);
     void Update();
 
     sf::Vector2f getPosition() { return position; }
+    int getDisplayValue() { return displayValue; }
+    int getTrueValue() { return trueValue; }
 
-    void CheckButton(sf::Vector2i mousePos);
+    bool CheckButton(sf::Vector2i mousePos);
 };
 
