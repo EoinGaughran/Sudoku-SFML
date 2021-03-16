@@ -9,8 +9,16 @@
 #include <vector>
 #include <Board.h>
 #include <Square.h>
+#include <Button.h>
 
 static const float VIEW_HEIGHT = 550.0f;
+
+const int MAIN_MENU = 0;
+const int GAME_SCREEN = 1;
+const int CHOICE_SCREEN = 2;
+const int SETTINGS_SCREEN = 3;
+const int HIGH_SCORES = 4;
+const int INTERNET_CONNECT = 5;
 
 void ResizeView(const sf::RenderWindow& window, sf::View& view){
 
@@ -102,6 +110,7 @@ int main()
     /* initialize random seed: */
     srand (time(NULL));
 
+    // Main board
     for(int i = 1 ; i <= boardSize ; i++ ){
 
         for(int j = 1 ; j <= boardSize ; j++){
@@ -131,11 +140,14 @@ int main()
     int bouncing = 10;
     int mouseHasBeenPressed = false;
 
+    int screen = 0;
+
+
     //CHANGE THIS
     sf::Vector2u locator;
 
+    //Selection Board
     std::vector<Square> selectionSquares;
-
     for(int i = 1 ; i <= selection ; i++ ){
 
         for(int j = 1 ; j <= selection; j++){
@@ -155,6 +167,9 @@ int main()
             numbers++;
         }
     }
+
+    //Main menu
+    Button button(font, sf::Vector2f(400,400), sf::Color::White, sf::Vector2f(100, 50), "Start", 30);
 
     //Square square(nullptr, sf::Vector2f(100.0f,100.0f), sf::Vector2f(50.0f,50.0f), sf::Vector2u(0,0), font, 5, 7, true);
 
@@ -211,42 +226,54 @@ int main()
             //mouse has been pressed - refuse Input
             if(!mouseHasBeenPressed){
 
-                if(!enableSelect){
+                switch(screen){
 
-                    for(Square& aSquare : squares){
+                    case MAIN_MENU:
 
-                        if(aSquare.CheckButton(mousePos)){
+                        screen = GAME_SCREEN;
 
-                            std::cout << "Return Value: " << aSquare.getDisplayValue() << "\n";
-                            bouncing = 20;
-                            enableSelect = true;
+                        break;
 
-                            //CHANGE THIS
-                            locator = aSquare.getMatrixPoint();
-                        }
-                    }
-                }
-                else{
+                    case GAME_SCREEN:
 
-                    for(Square& aSquare : selectionSquares){
+                        for(Square& aSquare : squares){
 
-                        if(aSquare.CheckButton(mousePos)){
+                            if(aSquare.CheckButton(mousePos)){
 
-                            std::cout << "Return Value: " << aSquare.getDisplayValue() << "\n";
-                            bouncing = 20;
+                                std::cout << "Return Value: " << aSquare.getDisplayValue() << "\n";
+                                bouncing = 20;
+                                screen = CHOICE_SCREEN;
 
-                            //CHANGE THIS
-                            for(Square& bSquare : squares){
-
-                                if(bSquare.getMatrixPoint() == locator){
-
-                                    bSquare.setDisplayValue(aSquare.getDisplayValue());
-                                }
+                                //CHANGE THIS
+                                locator = aSquare.getMatrixPoint();
                             }
-
-                            enableSelect = false;
                         }
-                    }
+                        
+                        break;
+
+
+                    case CHOICE_SCREEN:
+
+                        for(Square& aSquare : selectionSquares){
+
+                            if(aSquare.CheckButton(mousePos)){
+
+                                std::cout << "Return Value: " << aSquare.getDisplayValue() << "\n";
+                                bouncing = 20;
+
+                                //CHANGE THIS
+                                for(Square& bSquare : squares){
+
+                                    if(bSquare.getMatrixPoint() == locator){
+
+                                        bSquare.setDisplayValue(aSquare.getDisplayValue());
+                                    }
+                                }
+
+                                screen = GAME_SCREEN;
+                            }
+                        }
+                        break;
                 }
                 mouseHasBeenPressed = true;
             }
@@ -266,26 +293,36 @@ int main()
 
         window.draw(player);
         //tux.Draw(window);
-        window.draw(black);
 
-        if(!enableSelect){
-        
-            for(Square& aSquare : squares){
-                aSquare.Draw(window);
-                aSquare.Update();
-            }
-        }
-        else{
+        switch(screen){
+
+            case MAIN_MENU:
+
+                button.Draw(window);
+
+                break;
+
+            case GAME_SCREEN:
+
+                window.draw(black);            
+
+                for(Square& aSquare : squares){
+                    aSquare.Draw(window);
+                    aSquare.Update();
+                }
+                break;
+
+            case CHOICE_SCREEN:
             
-            window.draw(shade);
+                window.draw(shade);
 
-            
-            for(Square& aSquare : selectionSquares){
+                for(Square& aSquare : selectionSquares){
 
-                aSquare.Draw(window);
-                aSquare.Update();
+                    aSquare.Draw(window);
+                    aSquare.Update();
+                }
+                break;
             }
-        }
 
         window.display();
     }
