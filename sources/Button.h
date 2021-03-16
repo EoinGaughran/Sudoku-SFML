@@ -17,7 +17,7 @@ private:
 public:
 
     Button(
-        sf::Font font,
+        sf::Font& font,
         sf::Vector2f cooard,
         sf::Color color,
         sf::Vector2f size,
@@ -26,6 +26,8 @@ public:
     );
 
     ~Button();
+
+    bool CheckButton(sf::Vector2i mousePos);
 
     void Draw(sf::RenderWindow& window);
 };

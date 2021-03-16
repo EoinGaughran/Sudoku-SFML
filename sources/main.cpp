@@ -169,7 +169,7 @@ int main()
     }
 
     //Main menu
-    Button button(font, sf::Vector2f(400,400), sf::Color::White, sf::Vector2f(100, 50), "Start", 30);
+    Button button(font, sf::Vector2f(200,300), sf::Color::White, sf::Vector2f(100, 50), "Start", 30);
 
     //Square square(nullptr, sf::Vector2f(100.0f,100.0f), sf::Vector2f(50.0f,50.0f), sf::Vector2u(0,0), font, 5, 7, true);
 
@@ -230,8 +230,11 @@ int main()
 
                     case MAIN_MENU:
 
-                        screen = GAME_SCREEN;
+                        if(button.CheckButton(mousePos)){
 
+                            screen = GAME_SCREEN;
+                        }
+                        
                         break;
 
                     case GAME_SCREEN:
