@@ -22,7 +22,7 @@ Square::Square(
     displayNumberSFText.setString(std::to_string(displayValue));
     displayNumberSFText.setCharacterSize(fontSize);
     
-    if(visable) displayNumberSFText.setFillColor(sf::Color::Black);
+    if(visable) displayNumberSFText.setFillColor(sf::Color(55,30,48));
     else displayNumberSFText.setFillColor(sf::Color::White);
 
     //displayNumber.setOrigin(sf::Vector2f(fontSize/2, fontSize/2));
@@ -64,7 +64,6 @@ bool Square::CheckButton(sf::Vector2i mousePos){
         std::cout << displayValue;
         std::cout << " mousePos.x: " << mousePos.x;
         std::cout << " mousePos.y: " << mousePos.y << "\n";*/
-        background.setFillColor(sf::Color::Red);
 
         return 1;
     }

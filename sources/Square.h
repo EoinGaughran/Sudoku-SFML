@@ -40,5 +40,7 @@ public:
     sf::Vector2u getMatrixPoint() { return boardLocation; }
 
     bool CheckButton(sf::Vector2i mousePos);
+
+    void setColor( sf::Color color ) { background.setFillColor(color); }
 };
 

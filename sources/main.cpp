@@ -20,6 +20,13 @@ const int SETTINGS_SCREEN = 3;
 const int HIGH_SCORES = 4;
 const int INTERNET_CONNECT = 5;
 
+const sf::Color BACKGROUND_COLOR = sf::Color(179,0,27);
+const sf::Color BOARD_COLOR = sf::Color(55,30,48);
+const sf::Color SQUARE_COLOR = sf::Color(151,239,223);
+const sf::Color SELECTION_COLOR = sf::Color(250,243,62);
+const sf::Color MENU_COLOR = sf::Color(246,130,140);
+const sf::Color NUMBERS_COLOR = sf::Color(55,30,48);
+
 void ResizeView(const sf::RenderWindow& window, sf::View& view){
 
     float aspectRatio = float(window.getSize().x) / float(window.getSize().y);
@@ -89,7 +96,13 @@ int main()
     tux.setPosition(sf::Vector2f(width/2, height/2));*/
 
     sf::Font font;
+    sf::Font fontBold;
     if (!font.loadFromFile("../../res/fonts/heebo/Heebo-Medium.ttf"))
+    {
+        // error...
+    }
+
+    if (!fontBold.loadFromFile("../../res/fonts/heebo/Heebo-Black.ttf"))
     {
         // error...
     }
@@ -100,7 +113,7 @@ int main()
     sf::RectangleShape black;
     black.setPosition(sf::Vector2f(45.0f,45.0f));
     black.setSize(sf::Vector2f(455.0f,455.0f));
-    black.setFillColor(sf::Color::Black);
+    black.setFillColor(BOARD_COLOR);
 
     int boardSize = 9;
     //int squareSize = 3;
@@ -116,7 +129,7 @@ int main()
         for(int j = 1 ; j <= boardSize ; j++){
 
             squares.push_back(Square(
-                sf::Color(255,255,255),
+                SQUARE_COLOR,
                 sf::Vector2f(45.0f, 45.0f),
                 sf::Vector2f(50.0f * j ,50.0f * i),
                 sf::Vector2u(j,i),
@@ -132,7 +145,14 @@ int main()
     sf::RectangleShape shade;
     shade.setPosition(sf::Vector2f(0.0f,0.0f));
     shade.setSize(sf::Vector2f(600.0f,600.0f));
-    shade.setFillColor(sf::Color(0,0,0,200));
+    shade.setFillColor(BOARD_COLOR);
+
+    sf::Text choose;
+    choose.setFillColor(sf::Color::White);
+    choose.setFont(fontBold);
+    choose.setCharacterSize(40);
+    choose.setPosition(80,495);
+    choose.setString("CHOOSE A NUMBER");
 
     int selection = 3;
     int numbers = 1;
@@ -216,9 +236,11 @@ int main()
 
             //bouncing--;
         //}
-        
+
+        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+            
             //player.setPosition((float) mousePos.x, (float) mousePos.y);
 
             int i = 0;
@@ -246,6 +268,8 @@ int main()
                                 std::cout << "Return Value: " << aSquare.getDisplayValue() << "\n";
                                 bouncing = 20;
                                 screen = CHOICE_SCREEN;
+
+                                aSquare.setColor(sf::Color::Red);
 
                                 //CHANGE THIS
                                 locator = aSquare.getMatrixPoint();
@@ -291,7 +315,7 @@ int main()
 
         view.setCenter(player.getPosition());
 
-        window.clear(sf::Color(150, 150, 150));
+        window.clear(BACKGROUND_COLOR);
         window.setView(view);
 
         window.draw(player);
@@ -310,6 +334,14 @@ int main()
                 window.draw(black);            
 
                 for(Square& aSquare : squares){
+
+                    if(aSquare.CheckButton(mousePos))
+
+                        aSquare.setColor(SELECTION_COLOR);
+                    else
+
+                        aSquare.setColor(SQUARE_COLOR);
+
                     aSquare.Draw(window);
                     aSquare.Update();
                 }
@@ -321,9 +353,19 @@ int main()
 
                 for(Square& aSquare : selectionSquares){
 
+                    if(aSquare.CheckButton(mousePos))
+
+                        aSquare.setColor(SELECTION_COLOR);
+                    else
+
+                        aSquare.setColor(MENU_COLOR);
+
                     aSquare.Draw(window);
                     aSquare.Update();
                 }
+
+                window.draw(choose);
+
                 break;
             }
 
