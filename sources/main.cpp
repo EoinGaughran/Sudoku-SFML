@@ -156,9 +156,10 @@ int main()
 
     int selection = 3;
     int numbers = 1;
-    bool enableSelect = false;
+    bool errorCheck = false;
     int bouncing = 10;
-    int mouseHasBeenPressed = false;
+    bool mouseHasBeenPressed = false;
+    bool keyHasBeenPressed = false;
 
     int screen = 0;
 
@@ -223,19 +224,26 @@ int main()
 
                 break;
 
-            case sf::Event::TextEntered:
+            /*case sf::Event::TextEntered:
 
                 if (game.text.unicode < 128)
                     std::cout << "ASCII character typed: " << static_cast<char>(game.text.unicode) << std::endl;
-                break;
-            
+                break;*/
             }
+
         }
 
-        //if(bouncing > 0){
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Y)){
 
-            //bouncing--;
-        //}
+            if(!keyHasBeenPressed){
+
+                if(errorCheck) errorCheck = false;
+                else errorCheck = true;
+
+                keyHasBeenPressed = true;
+            }
+        }
+        else keyHasBeenPressed = false;
 
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
@@ -338,9 +346,17 @@ int main()
                     if(aSquare.CheckButton(mousePos))
 
                         aSquare.setColor(SELECTION_COLOR);
-                    else
 
+                    else
+                    
                         aSquare.setColor(SQUARE_COLOR);
+
+                    if(errorCheck){
+
+                        if(aSquare.getTrueValue() == aSquare.getDisplayValue())
+
+                            aSquare.setColor(sf::Color(58,110,54));
+                    }
 
                     aSquare.Draw(window);
                     aSquare.Update();
