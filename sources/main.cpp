@@ -110,37 +110,12 @@ int main()
     //Create Board
     //Board board(sf::Vector2u(9,9), sf::Vector2f(50.0f,50.0f), 1, font);
 
+    Board board(9, sf::Vector2f(50.0f, 50.0f), 1, font);
+
     sf::RectangleShape black;
     black.setPosition(sf::Vector2f(45.0f,45.0f));
     black.setSize(sf::Vector2f(455.0f,455.0f));
     black.setFillColor(BOARD_COLOR);
-
-    int boardSize = 9;
-    //int squareSize = 3;
-
-    std::vector<Square> squares;
-
-    /* initialize random seed: */
-    srand (time(NULL));
-
-    // Main board
-    for(int i = 1 ; i <= boardSize ; i++ ){
-
-        for(int j = 1 ; j <= boardSize ; j++){
-
-            squares.push_back(Square(
-                SQUARE_COLOR,
-                sf::Vector2f(45.0f, 45.0f),
-                sf::Vector2f(50.0f * j ,50.0f * i),
-                sf::Vector2u(j,i),
-                font,
-                33,
-                rand() % 9 + 1,
-                7,
-                true
-            ));
-        }
-    }
 
     sf::RectangleShape shade;
     shade.setPosition(sf::Vector2f(0.0f,0.0f));
@@ -162,7 +137,6 @@ int main()
     bool keyHasBeenPressed = false;
 
     int screen = 0;
-
 
     //CHANGE THIS
     sf::Vector2u locator;
@@ -269,20 +243,9 @@ int main()
 
                     case GAME_SCREEN:
 
-                        for(Square& aSquare : squares){
+                        locator = board.ClickCheck(mousePos);
 
-                            if(aSquare.CheckButton(mousePos)){
-
-                                std::cout << "Return Value: " << aSquare.getDisplayValue() << "\n";
-                                bouncing = 20;
-                                screen = CHOICE_SCREEN;
-
-                                aSquare.setColor(sf::Color::Red);
-
-                                //CHANGE THIS
-                                locator = aSquare.getMatrixPoint();
-                            }
-                        }
+                        if(locator.x != 0) screen = CHOICE_SCREEN;
                         
                         break;
 
@@ -294,10 +257,9 @@ int main()
                             if(aSquare.CheckButton(mousePos)){
 
                                 std::cout << "Return Value: " << aSquare.getDisplayValue() << "\n";
-                                bouncing = 20;
 
                                 //CHANGE THIS
-                                for(Square& bSquare : squares){
+                                for(Square& bSquare : board.getBoardSquares()){
 
                                     if(bSquare.getMatrixPoint() == locator){
 
@@ -339,28 +301,14 @@ int main()
 
             case GAME_SCREEN:
 
-                window.draw(black);            
+                window.draw(black); 
+                
+                board.CheckPositionOnBoard(mousePos);
 
-                for(Square& aSquare : squares){
+                if(errorCheck) board.ErrorCheck();
 
-                    if(aSquare.CheckButton(mousePos))
+                board.draw(window);
 
-                        aSquare.setColor(SELECTION_COLOR);
-
-                    else
-                    
-                        aSquare.setColor(SQUARE_COLOR);
-
-                    if(errorCheck){
-
-                        if(aSquare.getTrueValue() == aSquare.getDisplayValue())
-
-                            aSquare.setColor(sf::Color(58,110,54));
-                    }
-
-                    aSquare.Draw(window);
-                    aSquare.Update();
-                }
                 break;
 
             case CHOICE_SCREEN:
@@ -372,9 +320,8 @@ int main()
                     if(aSquare.CheckButton(mousePos))
 
                         aSquare.setColor(SELECTION_COLOR);
-                    else
 
-                        aSquare.setColor(MENU_COLOR);
+                    else aSquare.setColor(MENU_COLOR);
 
                     aSquare.Draw(window);
                     aSquare.Update();

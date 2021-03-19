@@ -2,11 +2,50 @@
 #include "Board.h"
 #include <iostream>
 
-Board::Board(sf::Vector2u size, sf::Vector2f cooards, int difficulty, sf::Font font) {
+Board::Board(int boardSize, sf::Vector2f cooards, int difficulty, sf::Font& font) {
 
     std::cout << "Difficulty Set: " << difficulty << "\n";
-    std::cout << "Board Size: (" << size.x << ", " << size.y << ")\n";
+    std::cout << "Board Size: (" << boardSize << ")\n";
 
+    /* initialize random seed: */
+    srand (time(NULL));
+
+    this->boardSize = boardSize;    
+    int potential;
+
+    for( int row = 1 ; row <= boardSize ; row++ ) {
+
+        for( int col = 1 ; col <= boardSize ; col++ ){
+
+            potential = rand() % boardSize + 1;
+    
+            int count = 0;
+
+            while(count < 200 && !(isNumberValid(col, row, potential))){
+
+                potential = rand() % boardSize + 1;
+                count++;
+                if(count == 200) potential = 10;
+                //std::cout << "isNumberValid col(" << col << ") row(" << row << ") number: " << potential << "\n";
+            }
+
+            sudokuNumbers[col][row] = potential;
+
+            std::cout << "isNumberValid: YES - " << potential << " is sudokuNumber[" << col << "][" << row << "]" << "\n";
+
+            squares.push_back(Square(
+                sf::Color::White,
+                sf::Vector2f(45.0f, 45.0f),
+                sf::Vector2f(50.0f * col, 50.0f * row),
+                sf::Vector2u(col,row),
+                font,
+                33,
+                sudokuNumbers[col][row],
+                sudokuNumbers[col][row],
+                true
+            ));
+        }
+    }
 }
 
 Board::~Board()
@@ -14,6 +53,98 @@ Board::~Board()
 }
 
 void Board::draw(sf::RenderWindow& window){
+    
+    for(Square& aSquare : squares){
 
-    //square.Update(window);
+        aSquare.Draw(window);
+        aSquare.Update();
+    }
 }
+
+void Board::CheckPositionOnBoard(sf::Vector2i mousePos){
+
+    for(Square& aSquare : squares){
+
+        if(aSquare.CheckButton(mousePos))
+
+            aSquare.setColor(SELECTION_COLOR);
+
+        else aSquare.setColor(SQUARE_COLOR);
+    }
+}
+
+void Board::ErrorCheck(){
+
+    for(Square& aSquare : squares){
+
+        if(aSquare.getTrueValue() == aSquare.getDisplayValue())
+
+            aSquare.setColor(sf::Color(58,110,54));
+    }
+}
+
+sf::Vector2u Board::ClickCheck(sf::Vector2i mousePos){
+
+    for(Square& aSquare : squares){
+
+        if(aSquare.CheckButton(mousePos)){
+
+            std::cout << "Return Value: " << aSquare.getDisplayValue() << "\n";
+            //screen = CHOICE_SCREEN;
+
+            aSquare.setColor(sf::Color::Red);
+
+        }
+
+            //CHANGE THIS
+            return aSquare.getMatrixPoint();
+    }
+
+    return sf::Vector2u(0,0);
+}
+
+bool Board::isNumberValid(int col, int row, int potential){
+
+    //std::cout << "Checking origin point: " << origin.x << "," << origin.y << "\n";
+
+    for(int i = 1 ; i <= 9 ; i++ ){
+
+        if(sudokuNumbers[col][i] == potential){
+            
+            std::cout << "invalid (" << col << ")(" << row << ")" << "\n";
+            std::cout << "sudokuNumbers[" << col << "][" << i << "] is equal to potential: " << potential << "\n";
+            return false;
+        }
+
+        if(sudokuNumbers[i][row] == potential){
+
+            std::cout << "invalid (" << col << ")(" << row << ")" << "\n";
+            std::cout << "sudokuNumbers[" << i << "][" << row << "] is equal to potential: " << potential << "\n";
+            return false;
+        }
+    }
+
+    int minX, minY;
+    int maxX = col, maxY = row;
+
+    while(maxX % 3) maxX++;
+    while(maxY % 3) maxY++;
+    minX = maxX - 2;
+    minY = maxY - 2;
+
+    for(int i = minY ; i <= maxY ; i++ ){
+
+        for(int j = minX ; j <= maxX ; j++ ){
+
+            if(sudokuNumbers[j][i] == potential){
+
+                std::cout << "invalid (" << col << ")(" << row << ")" << "\n";
+                std::cout << "square error on: mixX - " << minX << ", minY - " << minY << "\n";
+                std::cout << "sudokuNumbers[" << j << "][" << i << "] == " << potential << "\n";
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
