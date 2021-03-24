@@ -34,7 +34,7 @@ Board::Board(int boardSize, sf::Vector2f cooards, int difficulty, sf::Font& font
             std::cout << "isNumberValid: YES - " << potential << " is sudokuNumber[" << col << "][" << row << "]" << "\n";
 
             squares.push_back(Square(
-                sf::Color::White,
+                sf::Color(0,0,0),
                 sf::Vector2f(45.0f, 45.0f),
                 sf::Vector2f(50.0f * col, 50.0f * row),
                 sf::Vector2u(col,row),
@@ -57,9 +57,11 @@ void Board::draw(sf::RenderWindow& window){
     for(Square& aSquare : squares){
 
         aSquare.Draw(window);
-        aSquare.Update();
+        aSquare.Update(resizeMultiplier);
     }
 }
+
+void Board::updateSizeMultiplier( float change ) { resizeMultiplier = change; }
 
 void Board::CheckPositionOnBoard(sf::Vector2i mousePos){
 
@@ -67,9 +69,9 @@ void Board::CheckPositionOnBoard(sf::Vector2i mousePos){
 
         if(aSquare.CheckButton(mousePos))
 
-            aSquare.setColor(SELECTION_COLOR);
+            aSquare.setColor(sf::Color(250,243,62));
 
-        else aSquare.setColor(SQUARE_COLOR);
+        else aSquare.setColor(sf::Color(151,239,223));
     }
 }
 
@@ -83,7 +85,7 @@ void Board::ErrorCheck(){
     }
 }
 
-sf::Vector2u Board::ClickCheck(sf::Vector2i mousePos){
+bool Board::ClickCheck(sf::Vector2i mousePos){
 
     for(Square& aSquare : squares){
 
@@ -92,15 +94,14 @@ sf::Vector2u Board::ClickCheck(sf::Vector2i mousePos){
             std::cout << "Return Value: " << aSquare.getDisplayValue() << "\n";
             //screen = CHOICE_SCREEN;
 
-            aSquare.setColor(sf::Color::Red);
+            //aSquare.setColor(sf::Color::Red);
 
+            clickedSquare = &aSquare;
+
+            return true;
         }
-
-            //CHANGE THIS
-            return aSquare.getMatrixPoint();
     }
-
-    return sf::Vector2u(0,0);
+    return false;
 }
 
 bool Board::isNumberValid(int col, int row, int potential){
@@ -148,3 +149,8 @@ bool Board::isNumberValid(int col, int row, int potential){
     return true;
 }
 
+Square& Board::getClickedSquare() {
+    
+    return *clickedSquare;
+    
+}
