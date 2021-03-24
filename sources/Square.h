@@ -14,6 +14,8 @@ private:
 
     sf::RectangleShape background;
 
+    float resizeMultiplier = 1.0f;
+
 public:
     Square(
         sf::Color color,
@@ -32,7 +34,8 @@ public:
     bool isTheValueCorrect();
     void setDisplayValue(int guess);
     void Draw(sf::RenderWindow& window);
-    void Update();
+    
+    void Update( float resizeChange );
 
     sf::Vector2f getPosition() { return position; }
     int getDisplayValue() { return displayValue; }

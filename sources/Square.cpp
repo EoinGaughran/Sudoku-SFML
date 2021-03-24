@@ -56,9 +56,9 @@ bool Square::CheckButton(sf::Vector2i mousePos){
     std::cout << "size.y: " << background.getPosition().y - background.getSize().y << "\n";*/
 
     if(mousePos.x > background.getPosition().x &&
-        mousePos.x < (background.getPosition().x + background.getSize().x) &&
+        mousePos.x < (background.getPosition().x + background.getSize().x ) &&
         mousePos.y > background.getPosition().y &&
-        mousePos.y < (background.getPosition().y + background.getSize().y)
+        mousePos.y < (background.getPosition().y + background.getSize().y )
     ){
         /*std::cout << "Position(" << boardLocation.x << "," << boardLocation.y << "): ";
         std::cout << displayValue;
@@ -70,7 +70,7 @@ bool Square::CheckButton(sf::Vector2i mousePos){
     return 0;
 }
 
-void Square::Update(){
+void Square::Update( float resizeChange ){
 
     sf::Vector2f velocity(0.0f, 0.0f);
     float speed = 0.4f;
@@ -90,6 +90,7 @@ void Square::Update(){
     displayNumberSFText.move(velocity);
     background.move(velocity);
 
+    if ( resizeChange != resizeMultiplier ) resizeMultiplier = resizeChange;
 }
 
 void Square::setDisplayValue( int guess ){

@@ -27,16 +27,19 @@ const sf::Color SELECTION_COLOR = sf::Color(250,243,62);
 const sf::Color MENU_COLOR = sf::Color(246,130,140);
 const sf::Color NUMBERS_COLOR = sf::Color(55,30,48);
 
-void ResizeView(const sf::RenderWindow& window, sf::View& view){
+const int height = 550;
+const int width = 550;
 
-    float aspectRatio = float(window.getSize().x) / float(window.getSize().y);
-    view.setSize(VIEW_HEIGHT * aspectRatio, VIEW_HEIGHT);
+float ResizeView(const sf::RenderWindow& window, sf::View& view){
+
+    //float aspectRatio = float(window.getSize().x) / float(window.getSize().y);
+    view.setSize(float(window.getSize().x), float(window.getSize().y));
+    return float(window.getSize().y) / height;
 }
 
 int main()
 {
-    int height = 550;
-    int width = 550;
+    float resizeMultiplier = 1.0f;
 
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(width, height), "Sudoku SFML", sf::Style::Close | sf::Style::Resize);
@@ -193,8 +196,10 @@ int main()
 
             case sf::Event::Resized:
                 //std::cout << "New window width: " << game.size.width << " New window height: " << game.size.height << std::endl;
-                printf("New hhwindow width: %i New window height %i\n", game.size.width, game.size.height);
-                ResizeView(window, view);
+                printf("New window width: %i New window height %i\n", game.size.width, game.size.height);
+                printf("Resize Multiplier: %f\n", resizeMultiplier);
+                resizeMultiplier = ResizeView(window, view);
+                board.updateSizeMultiplier(resizeMultiplier);
 
                 break;
 
@@ -243,9 +248,9 @@ int main()
 
                     case GAME_SCREEN:
 
-                        locator = board.ClickCheck(mousePos);
+                        //std::cout << "Locator X: " << locator.x << " Location Y: " << locator.y << "\n";
 
-                        if(locator.x != 0) screen = CHOICE_SCREEN;
+                        if(board.ClickCheck(mousePos)) screen = CHOICE_SCREEN;
                         
                         break;
 
@@ -258,14 +263,7 @@ int main()
 
                                 std::cout << "Return Value: " << aSquare.getDisplayValue() << "\n";
 
-                                //CHANGE THIS
-                                for(Square& bSquare : board.getBoardSquares()){
-
-                                    if(bSquare.getMatrixPoint() == locator){
-
-                                        bSquare.setDisplayValue(aSquare.getDisplayValue());
-                                    }
-                                }
+                                board.getClickedSquare().setDisplayValue(aSquare.getDisplayValue());
 
                                 screen = GAME_SCREEN;
                             }
@@ -324,7 +322,7 @@ int main()
                     else aSquare.setColor(MENU_COLOR);
 
                     aSquare.Draw(window);
-                    aSquare.Update();
+                    aSquare.Update(resizeMultiplier);
                 }
 
                 window.draw(choose);

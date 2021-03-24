@@ -6,7 +6,7 @@ class Board
 {
 private:
 
-    Square *square;
+    //Square *square;
     sf::Texture* texture;
     sf::Vector2f position;
     sf::Vector2u boardLocation;
@@ -16,7 +16,11 @@ private:
     int size;
     bool visable;
 
+    Square *clickedSquare;
+
     int boardSize;
+
+    float resizeMultiplier = 1.0f;
 
     std::vector<Square> squares;
 
@@ -42,11 +46,15 @@ public:
 
     void ErrorCheck();
 
-    sf::Vector2u ClickCheck(sf::Vector2i mousePos);
+    bool ClickCheck(sf::Vector2i mousePos);
 
     std::vector<Square> getBoardSquares() { return squares; }
 
     bool isNumberValid(int col, int row, int potential);
+
+    void updateSizeMultiplier( float change );
+
+    Square& getClickedSquare();
 
     const sf::Color BACKGROUND_COLOR = sf::Color(179,0,27);
     const sf::Color BOARD_COLOR = sf::Color(55,30,48);
